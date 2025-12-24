@@ -1,0 +1,56 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "tempo-claude"
+version = "0.1.0"
+description = "Automated Claude Code runner with rate limit handling and session persistence"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.9"
+authors = [
+    { name = "Tempo Contributors" }
+]
+keywords = ["claude", "automation", "cli", "ai", "coding"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development",
+]
+
+dependencies = [
+    "pexpect>=4.9.0",
+    "click>=8.1.0",
+    "python-dateutil>=2.8.0",
+    "rich>=13.0.0",
+    "pyyaml>=6.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "pyinstaller>=6.0.0",
+]
+
+[project.scripts]
+tempo = "tempo.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/tempo-claude/tempo"
+Repository = "https://github.com/tempo-claude/tempo"
+Issues = "https://github.com/tempo-claude/tempo/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["tempo"]
+
