@@ -1,0 +1,86 @@
+# Example: Sequence of Prompts
+# 
+# Use this format to run multiple tasks in order.
+# Tempo will complete each prompt before moving to the next.
+#
+# Run with: tempo run --sequence ./examples/sequence.yaml
+
+prompts:
+  - name: "Project Initialization"
+    prompt: |
+      Initialize a new full-stack project with the following structure:
+      - /backend - Node.js with Express and TypeScript
+      - /frontend - React with Vite and TypeScript
+      - /docker - Docker Compose configuration
+      
+      Set up:
+      - TypeScript configuration for both
+      - ESLint and Prettier
+      - Basic package.json scripts
+      - A root package.json with workspace commands
+      - Docker Compose with PostgreSQL service
+      
+      Create a simple health check endpoint in the backend and a "Hello World" 
+      page in the frontend to verify everything works.
+
+  - name: "Database & Authentication"
+    prompt: |
+      Add user authentication to the project:
+      
+      Backend:
+      - Set up Prisma with PostgreSQL
+      - Create User model (id, email, password, name, createdAt)
+      - Implement register endpoint with password hashing (bcrypt)
+      - Implement login endpoint returning JWT
+      - Create auth middleware for protected routes
+      - Add /me endpoint to get current user
+      
+      Frontend:
+      - Create login and register pages
+      - Set up auth context for managing user state
+      - Create protected route wrapper
+      - Add navigation header with login/logout
+      
+      Test the full auth flow.
+
+  - name: "Core Features"
+    prompt: |
+      Add the core blog functionality:
+      
+      Backend:
+      - Create Post model (id, title, content, published, authorId, createdAt, updatedAt)
+      - CRUD endpoints for posts
+      - Only authors can edit/delete their posts
+      - Public list endpoint with pagination
+      - Search posts by title/content
+      
+      Frontend:
+      - Posts list page with pagination
+      - Single post page
+      - Create/edit post form (authenticated)
+      - My posts page (authenticated)
+      - Search functionality
+      
+      Add proper loading states and error handling.
+
+  - name: "Polish & Testing"
+    prompt: |
+      Polish the application and add tests:
+      
+      1. Add Markdown support for post content (use react-markdown)
+      2. Improve UI/UX:
+         - Add proper form validation feedback
+         - Add toast notifications for actions
+         - Improve responsive design
+         - Add loading skeletons
+      3. Add tests:
+         - Backend: API tests with Supertest
+         - Frontend: Component tests with Vitest + Testing Library
+      4. Update README with:
+         - Project description
+         - Setup instructions
+         - Available scripts
+         - API documentation
+      
+      Make sure all tests pass.
+
