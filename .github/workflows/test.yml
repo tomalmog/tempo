@@ -1,0 +1,117 @@
+name: Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ['3.9', '3.11', '3.12']
+    
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+      
+      - name: Test imports
+        run: |
+          python -c "
+          from tempo.cli import main
+          from tempo.runner import TempoRunner
+          from tempo.parser import detect_rate_limit, parse_reset_time
+          from tempo.scheduler import wait_until_reset
+          from tempo.session import Session, SessionManager
+          from tempo.transcript import TranscriptWriter
+          from tempo.config import COMPLETION_CODE
+          print('All imports successful')
+          "
+      
+      - name: Test CLI
+        run: tempo --version
+      
+      - name: Test rate limit parser
+        run: |
+          python -c "
+          from tempo.parser import detect_rate_limit, parse_reset_time
+          
+          # Test detection
+          assert detect_rate_limit('Spending cap reached resets 4am')
+          assert detect_rate_limit('Limit reached')
+          assert not detect_rate_limit('Hello world')
+          
+          # Test time parsing
+          info = parse_reset_time('Spending cap reached resets 4am')
+          assert info is not None
+          assert info.reset_time.hour == 4
+          
+          print('Parser tests passed')
+          "
+      
+      - name: Test session persistence
+        run: |
+          python -c "
+          import tempfile
+          from tempo.session import SessionManager
+          
+          with tempfile.TemporaryDirectory() as tmpdir:
+              manager = SessionManager(tmpdir)
+              session = manager.create_new(prompt='Test')
+              manager.save(session)
+              loaded = manager.load()
+              assert loaded.session_id == session.session_id
+              manager.delete()
+              assert not manager.exists()
+          
+          print('Session tests passed')
+          "
+
+  # Test that PyInstaller builds work
+  build-test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller
+          pip install -e .
+      
+      - name: Build with PyInstaller
+        run: pyinstaller --onefile --name tempo tempo/__main__.py
+      
+      - name: Test built binary (Unix)
+        if: runner.os != 'Windows'
+        run: ./dist/tempo --version
+      
+      - name: Test built binary (Windows)
+        if: runner.os == 'Windows'
+        run: .\dist\tempo.exe --version
+
+
+
