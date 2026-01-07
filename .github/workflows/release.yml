@@ -84,6 +84,7 @@ jobs:
             -w /workspace \
             python:3.11-slim \
             bash -c "
+              apt-get update && apt-get install -y binutils &&
               pip install pyinstaller &&
               pip install -e . &&
               pyinstaller --onefile --name tempo tempo/__main__.py &&
