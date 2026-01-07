@@ -7,8 +7,8 @@ export const metadata: Metadata = {
   keywords: ['claude', 'claude code', 'automation', 'ai', 'coding', 'developer tools'],
   authors: [{ name: 'Tempo' }],
   icons: {
-    icon: '/logo.png',
-    apple: '/logo.png',
+    icon: '/iconlogo.png',
+    apple: '/iconlogo.png',
   },
   openGraph: {
     title: 'Tempo - Run Claude Code Overnight',
