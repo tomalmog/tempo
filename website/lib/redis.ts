@@ -4,7 +4,7 @@ export const REAL_DOWNLOAD_KEY = 'tempo_downloads_real'
 
 // Launch date for fake downloads
 const LAUNCH_DATE = new Date('2026-01-07T08:00:00Z') // Jan 7, 2026 morning
-const FAKE_PER_HOUR = 5 // Average fake downloads per hour
+const FAKE_PER_HOUR = 1.5 // Average fake downloads per hour
 
 // Create Redis client
 function createRedisClient() {
@@ -38,17 +38,17 @@ function calculateFakeDownloads(): number {
   const hoursSinceLaunch = Math.floor(msSinceLaunch / (1000 * 60 * 60))
   let fakeTotal = 0
   
-  // For each completed hour, add a pseudo-random number of downloads (3-7, avg 5)
+  // For each completed hour, add a pseudo-random number of downloads (1-2, avg ~1.5)
   for (let hour = 0; hour < hoursSinceLaunch; hour++) {
     const rand = seededRandom(hour + 12345) // Seed with hour number
-    const downloadsThisHour = Math.floor(rand * 5) + 3 // 3-7 downloads
+    const downloadsThisHour = Math.floor(rand * 2) + 1 // 1-2 downloads
     fakeTotal += downloadsThisHour
   }
   
   // For the current partial hour, add downloads proportionally with randomness
   const currentHourProgress = (msSinceLaunch % (1000 * 60 * 60)) / (1000 * 60 * 60)
   const currentHourSeed = hoursSinceLaunch + 12345
-  const currentHourTotal = Math.floor(seededRandom(currentHourSeed) * 5) + 3
+  const currentHourTotal = Math.floor(seededRandom(currentHourSeed) * 2) + 1
   
   // Spread downloads throughout the hour using deterministic "times"
   for (let i = 0; i < currentHourTotal; i++) {
